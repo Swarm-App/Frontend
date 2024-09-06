@@ -2,13 +2,19 @@ import { StyleSheet } from 'react-native';
 
 import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
+import TaskList from '../../components/TaskList';
+
+
+const taskItems = ['Task 1', 'Task 2', 'Task 3', 'Task 4','Task 1', 'Task 2', 'Task 3', 'Task 4','Task 1', 'Task 2', 'Task 3', 'Task 4','Task 1', 'Task 2', 'Task 3', 'Task 4','Task 1', 'Task 2', 'Task 3', 'Task 4'];
 
 export default function TabOneScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/index.tsx" />
+        <View style={styles.boardContainer}>
+          <TaskList title="Upcoming" tasks={taskItems} />
+          <TaskList title="InProgress" tasks={taskItems} />
+          <TaskList title="Done" tasks={taskItems} />
+        </View>
     </View>
   );
 }
@@ -16,16 +22,13 @@ export default function TabOneScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: 'stretch',
+    paddingTop: 50, // To give some space from the top
   },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
+  boardContainer: {
+    flexDirection: 'row', // Aligns the TaskList components in a row
+    alignItems: 'stretch',
+    justifyContent: 'space-evenly',
+    
   },
 });
