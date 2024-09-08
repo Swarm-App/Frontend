@@ -1,4 +1,3 @@
-// TaskList.tsx
 import React from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 
@@ -21,6 +20,9 @@ const TaskList: React.FC<TaskListProps> = ({ title, tasks }) => {
             <Text style={styles.taskText}>{item}</Text>
           </View>
         )}
+        // Adding the scroll indicator
+        showsVerticalScrollIndicator={true} // Displays the vertical scroll bar
+        style={styles.taskList} // Restrict height to enable scrolling
       />
     </View>
   );
@@ -33,7 +35,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 8,
     margin: 8,
-    flex:1,
+    flex: 1,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -53,6 +55,9 @@ const styles = StyleSheet.create({
   },
   taskText: {
     fontSize: 16,
+  },
+  taskList: {
+    maxHeight: 650, // Set the max height to enable scrolling inside the container
   },
 });
 

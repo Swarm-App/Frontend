@@ -24,11 +24,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'stretch',
     paddingTop: 50, // To give some space from the top
+    overflow:'scroll',
   },
   boardContainer: {
     flexDirection: 'row', // Aligns the TaskList components in a row
     alignItems: 'stretch',
     justifyContent: 'space-evenly',
+    flexWrap: 'nowrap', 
     
   },
 });
