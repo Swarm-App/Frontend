@@ -1,63 +1,109 @@
-import React from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, FlatList, Animated, StyleSheet } from 'react-native';
+import { PanGestureHandler, LongPressGestureHandler, GestureHandlerStateChangeEvent } from 'react-native-gesture-handler';
 
-// Define the props for the TaskList component
+// Define the type for the task list props
 interface TaskListProps {
+  tasks: string[];
   title: string;
-  tasks: string[]; // You can extend this to objects like { id: number, content: string }
 }
 
-// TaskList component with title and list of tasks
-const TaskList: React.FC<TaskListProps> = ({ title, tasks }) => {
+// Define the type for the pan values array, where each task has an Animated.ValueXY
+interface PanValues {
+  [index: number]: Animated.ValueXY;
+}
+
+const TaskList: React.FC<TaskListProps> = ({ tasks, title }) => {
+  // Create a state that stores pan values for each task
+  const [panValues, setPanValues] = useState<PanValues>(
+    tasks.map(() => new Animated.ValueXY())
+  );
+
+  // Handler for pan gesture events
+  const onGestureEvent = (index: number) => Animated.event(
+    [
+      {
+        nativeEvent: {
+          translationX: panValues[index].x,
+          translationY: panValues[index].y,
+        },
+      },
+    ],
+    { useNativeDriver: true }
+  );
+
+  // Handler for resetting position when long press is released
+  const onHandlerStateChange = (
+    index: number,
+    event: GestureHandlerStateChangeEvent
+  ) => {
+    if (event.nativeEvent.state === 5) { // Gesture state 'END'
+      Animated.spring(panValues[index], {
+        toValue: { x: 0, y: 0 },
+        useNativeDriver: true,
+      }).start();
+    }
+  };
+
   return (
     <View style={styles.taskListContainer}>
       <Text style={styles.taskListTitle}>{title}</Text>
       <FlatList
         data={tasks}
         keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.taskItem}>
-            <Text style={styles.taskText}>{item}</Text>
-          </View>
+        renderItem={({ item, index }) => (
+          <LongPressGestureHandler
+            onHandlerStateChange={(event) => onHandlerStateChange(index, event)}
+            minDurationMs={800}
+          >
+            <PanGestureHandler
+              onGestureEvent={onGestureEvent(index)}
+              onHandlerStateChange={(event) => onHandlerStateChange(index, event)}
+            >
+              <Animated.View
+                style={[
+                  styles.taskItem,
+                  {
+                    transform: [
+                      { translateX: panValues[index].x },
+                      { translateY: panValues[index].y },
+                    ],
+                  },
+                ]}
+              >
+                <Text style={styles.taskText}>{item}</Text>
+              </Animated.View>
+            </PanGestureHandler>
+          </LongPressGestureHandler>
         )}
-        // Adding the scroll indicator
-        showsVerticalScrollIndicator={true} // Displays the vertical scroll bar
-        style={styles.taskList} // Restrict height to enable scrolling
+        showsVerticalScrollIndicator={true}
+        style={styles.taskList}
       />
     </View>
   );
 };
 
-// Styles for the TaskList component
 const styles = StyleSheet.create({
   taskListContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 8,
-    margin: 8,
     flex: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+    margin: 10,
   },
   taskListTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 12,
+    marginBottom: 10,
+  },
+  taskList: {
+    height: 650, // Fixed height for list container
   },
   taskItem: {
-    backgroundColor: '#f9f9f9',
-    padding: 10,
-    borderRadius: 6,
-    marginBottom: 8,
+    backgroundColor: '#ddd',
+    padding: 15,
+    borderRadius: 5,
+    marginVertical: 5,
   },
   taskText: {
     fontSize: 16,
-  },
-  taskList: {
-    maxHeight: 650, // Set the max height to enable scrolling inside the container
   },
 });
 
