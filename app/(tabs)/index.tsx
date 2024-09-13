@@ -2,20 +2,17 @@ import { StyleSheet } from 'react-native';
 
 import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
-import TaskList from '../../components/TaskList';
+import TaskList from '../../components/TaskBoard';
+import TaskBoard from '../../components/TaskBoard';
 
 
-const taskItems = ['Task 1', 'Task 2', 'Task 3', 'Task 4','Task 1', 'Task 2', 'Task 3', 'Task 4','Task 1', 'Task 2', 'Task 3', 'Task 4','Task 1', 'Task 2', 'Task 3', 'Task 4','Task 1', 'Task 2', 'Task 3', 'Task 4'];
 
 export default function TabOneScreen() {
   return (
     <View style={styles.container}>
-        <View style={styles.boardContainer}>
-          <TaskList title="Upcoming" tasks={taskItems} />
-          <TaskList title="InProgress" tasks={taskItems} />
-          <TaskList title="Done" tasks={taskItems} />
-        </View>
+      <TaskBoard/>
     </View>
+
   );
 }
 
