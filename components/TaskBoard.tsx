@@ -32,17 +32,17 @@ const TaskBoard = () => {
     <View style={styles.container}>
       <View style={styles.boardContainer}>
         <View style={styles.dropZone} id='upcoming'>
-          <Text style={styles.taskListTitle}>Upcoming Tasks</Text>
+          {/* <Text style={styles.taskListTitle}>Upcoming Tasks</Text> */}
           {tasks.upcoming.map(renderTask)}
         </View>
 
         <View style={styles.dropZone} id='todo'>
-          <Text style={styles.taskListTitle}>ToDo Tasks</Text>
+          {/* <Text style={styles.taskListTitle}>ToDo Tasks</Text> */}
           {tasks.todo.map(renderTask)}
         </View>
 
         <View style={styles.dropZone} id='done'>
-          <Text style={styles.taskListTitle}>Done Tasks</Text>
+          {/* <Text style={styles.taskListTitle}>Done Tasks</Text> */}
           {tasks.done.map(renderTask)}
         </View>
       </View>

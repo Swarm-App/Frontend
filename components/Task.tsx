@@ -6,7 +6,7 @@ import {
   GestureResponderEvent,
   PanResponderGestureState,
   PanResponderInstance,
-  View
+  Dimensions
 } from 'react-native';
 
 interface DraggableState {
@@ -55,10 +55,17 @@ export default class Draggable extends Component<DraggableProps, DraggableState>
     });
   }
 
-  // Dummy function to determine the drop zone
   checkDropZone(x: number, y: number): string {
-    // Implement your logic to check the drop zone here
-    return 'todo'; // Replace with actual logic
+    const screenWidth = Dimensions.get('window').width;
+    const columnWidth = screenWidth / 3;
+
+    if (x < columnWidth) {
+      return 'upcoming'; // Left column
+    } else if (x < columnWidth * 2) {
+      return 'todo'; // Middle column
+    } else {
+      return 'done'; // Right column
+    }
   }
 
   render() {
