@@ -10,7 +10,7 @@ const TaskBoard = () => {
     done: [5]
   });
 
-  const handleDrop = (dropZoneId: string, taskId: number) => {
+  const handleDrop = async (dropZoneId: string, taskId: number) => {
     // Remove task from all lists
     let updatedTasks = {
       upcoming: tasks.upcoming.filter(id => id !== taskId),
