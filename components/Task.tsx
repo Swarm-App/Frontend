@@ -16,6 +16,7 @@ interface DraggableState {
 interface PanValue {
   x: number;
   y: number;
+
 }
 
 interface DraggableProps {
@@ -100,8 +101,10 @@ const CIRCLE_RADIUS = 30;
 const styles = StyleSheet.create({
   circle: {
     backgroundColor: 'skyblue',
+
     width: CIRCLE_RADIUS * 2,
     height: CIRCLE_RADIUS * 2,
     borderRadius: CIRCLE_RADIUS,
   },
 });
+
