@@ -6,7 +6,9 @@ import {
   GestureResponderEvent,
   PanResponderGestureState,
   PanResponderInstance,
-  Dimensions
+  Dimensions,
+  View,
+  Text
 } from 'react-native';
 
 interface DraggableState {
@@ -88,23 +90,53 @@ export default class Draggable extends Component<DraggableProps, DraggableState>
     };
 
     return (
-      <Animated.View
+    <Animated.View
         {...this.panResponder.panHandlers}
-        style={[panStyle, styles.circle]}
-      />
+        style={[panStyle, styles.kanbanCard]}
+      >
+    <View style={styles.cardHeader}>
+      <Text style={styles.cardTitle}>Task Title</Text>
+    </View>
+    <View style={styles.cardContent}>
+      <Text style={styles.cardDescription}>This is a description of the task.</Text>
+    </View>
+  </Animated.View>
     );
   }
 }
 
-const CIRCLE_RADIUS = 30;
-
 const styles = StyleSheet.create({
-  circle: {
-    backgroundColor: 'skyblue',
-
-    width: CIRCLE_RADIUS * 2,
-    height: CIRCLE_RADIUS * 2,
-    borderRadius: CIRCLE_RADIUS,
+  kanbanCard: {
+    width: 350,            // Kanban cards are usually wider
+    height: 150,           // Adjust the height as necessary
+    backgroundColor: '#f9f9f9',  // Light background color for a clean look
+    borderRadius: 5,       // Slight border radius for modern look
+    shadowColor: '#000',   // Shadow for subtle elevation effect
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,    // Light shadow
+    shadowRadius: 4,
+    elevation: 3,          // Slight elevation for Android
+    padding: 10,           // Padding for inner content
+    marginVertical: 10,    // Space between cards
+  },
+  cardHeader: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',  // Line to separate header
+    paddingBottom: 5,
+  },
+  cardTitle: {
+    fontSize: 18,          // Larger font for the task title
+    fontWeight: 'bold',    // Bold to make it stand out
+    color: '#333',         // Darker text color
+  },
+  cardContent: {
+    paddingTop: 10,
+  },
+  cardDescription: {
+    fontSize: 14,
+    color: '#666',         // Lighter color for description text
   },
 });
+
+
 
