@@ -107,8 +107,8 @@ export default class Draggable extends Component<DraggableProps, DraggableState>
 
 const styles = StyleSheet.create({
   kanbanCard: {
-    width: 350,            // Kanban cards are usually wider
-    height: 150,           // Adjust the height as necessary
+    flex: 1,
+            // Adjust the height as necessary
     backgroundColor: '#f9f9f9',  // Light background color for a clean look
     borderRadius: 5,       // Slight border radius for modern look
     shadowColor: '#000',   // Shadow for subtle elevation effect
