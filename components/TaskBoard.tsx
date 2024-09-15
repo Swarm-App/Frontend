@@ -71,7 +71,8 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10, // Optional: Add rounded corners for better UI
     borderWidth: 1, // Add border to visually distinguish drop zones
-    borderColor: 'gray'
+    borderColor: 'gray',
+    userSelect: 'none',
   },
 });
 
