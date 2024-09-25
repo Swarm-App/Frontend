@@ -1,21 +1,17 @@
-import { StyleSheet } from 'react-native';
-
-import EditScreenInfo from '@/components/EditScreenInfo';
-import { Text, View } from '@/components/Themed';
-import TaskList from '../../components/TaskList';
-
-
-const taskItems = ['Task 1', 'Task 2', 'Task 3', 'Task 4','Task 1', 'Task 2', 'Task 3', 'Task 4','Task 1', 'Task 2', 'Task 3', 'Task 4','Task 1', 'Task 2', 'Task 3', 'Task 4','Task 1', 'Task 2', 'Task 3', 'Task 4'];
+import { StyleSheet, ImageBackground ,View} from 'react-native';
+import TaskBoard from '../../components/TaskBoard'; // Ensure the path is correct
 
 export default function TabOneScreen() {
   return (
-    <View style={styles.container}>
-        <View style={styles.boardContainer}>
-          <TaskList title="Upcoming" tasks={taskItems} />
-          <TaskList title="InProgress" tasks={taskItems} />
-          <TaskList title="Done" tasks={taskItems} />
-        </View>
-    </View>
+    <ImageBackground
+      source={require('../../assets/images/background.jpg')} // Path to your background image
+      style={styles.backgroundImage}
+      resizeMode="cover" // Adjusts the resizing mode to cover the entire screen
+    >
+      <View style={styles.container}>
+        <TaskBoard />
+      </View>
+    </ImageBackground>
   );
 }
 
@@ -23,14 +19,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'stretch',
-    paddingTop: 50, // To give some space from the top
-    overflow:'scroll',
+    paddingTop: 50, // Adds space from the top
   },
-  boardContainer: {
-    flexDirection: 'row', // Aligns the TaskList components in a row
-    alignItems: 'stretch',
-    justifyContent: 'space-evenly',
-    flexWrap: 'nowrap', 
-    
+  backgroundImage: {
+    flex: 1, // Ensures the image covers the entire screen
   },
 });
