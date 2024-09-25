@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import Draggable from '../components/Task'; // Update the path if necessary
 
 const TaskBoard = () => {
   // Initialize tasks with dummy data
   const [tasks, setTasks] = useState({
-    upcoming: [1, 2],
+    upcoming: [1, 2,6,7,8,9,10,11,12,13,14,15,16,17,18],
     todo: [3, 4],
     done: [5]
   });
@@ -32,18 +32,25 @@ const TaskBoard = () => {
     <View style={styles.container}>
       <View style={styles.boardContainer}>
         <View style={styles.dropZone} id='upcoming'>
-          {/* <Text style={styles.taskListTitle}>Upcoming Tasks</Text> */}
+          <View><Text style={styles.taskListTitle}>Upcoming</Text></View>
+          <ScrollView style={styles.scrollView}>
           {tasks.upcoming.map(renderTask)}
+          </ScrollView>
         </View>
 
         <View style={styles.dropZone} id='todo'>
-          {/* <Text style={styles.taskListTitle}>ToDo Tasks</Text> */}
+        <View><Text style={styles.taskListTitle}>To Do</Text></View>
+        <ScrollView style={styles.scrollView}>
           {tasks.todo.map(renderTask)}
+          </ScrollView>
         </View>
 
         <View style={styles.dropZone} id='done'>
-          {/* <Text style={styles.taskListTitle}>Done Tasks</Text> */}
-          {tasks.done.map(renderTask)}
+        <View ><Text style={styles.taskListTitle}>Done</Text></View>
+        <ScrollView style={styles.scrollView}>
+        {tasks.done.map(renderTask)}
+        </ScrollView>
+
         </View>
       </View>
     </View>
@@ -64,6 +71,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
+    textAlignVertical:'center',
+    textAlign:'center',
   },
   dropZone: {
     flex: 1,
@@ -73,6 +82,13 @@ const styles = StyleSheet.create({
     borderWidth: 1, // Add border to visually distinguish drop zones
     borderColor: 'gray',
     userSelect: 'none',
+  },
+  scrollView: {
+    flexGrow: 1, // Allow the content to scroll if it exceeds the available space
+  },
+  head:{
+
+
   },
 });
 
