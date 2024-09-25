@@ -66,6 +66,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',  // Set direction to row to create columns
     justifyContent: 'space-between', // Add space between the columns
+
   },
   taskListTitle: {
     fontSize: 18,
@@ -73,6 +74,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     textAlignVertical:'center',
     textAlign:'center',
+    color: '#ffffff',
   },
   dropZone: {
     flex: 1,
@@ -82,6 +84,8 @@ const styles = StyleSheet.create({
     borderWidth: 1, // Add border to visually distinguish drop zones
     borderColor: 'gray',
     userSelect: 'none',
+    backgroundColor: 'rgba(0, 0, 0, 0.2)', 
+
   },
   scrollView: {
     flexGrow: 1, // Allow the content to scroll if it exceeds the available space
