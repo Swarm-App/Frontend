@@ -5,7 +5,7 @@ import Draggable from '../components/Task'; // Update the path if necessary
 const TaskBoard = () => {
   // Initialize tasks with dummy data
   const [tasks, setTasks] = useState({
-    upcoming: [1, 2,6,7,8,9,10,11,12,13,14,15,16,17,18],
+    upcoming: [1, 2,6],
     todo: [3, 4],
     done: [5]
   });
@@ -30,6 +30,7 @@ const TaskBoard = () => {
 
   return (
     <View style={styles.container}>
+      <ScrollView horizontal={true} contentContainerStyle={styles.boardScrollContainer}>
       <View style={styles.boardContainer}>
         <View style={styles.dropZone} id='upcoming'>
           <View><Text style={styles.taskListTitle}>Upcoming</Text></View>
@@ -53,6 +54,7 @@ const TaskBoard = () => {
 
         </View>
       </View>
+      </ScrollView>
     </View>
   );
 };
@@ -76,8 +78,12 @@ const styles = StyleSheet.create({
     textAlign:'center',
     color: '#ffffff',
   },
+  boardScrollContainer: {
+    flexGrow: 1,  // Ensures the scroll view can grow if needed
+  },
   dropZone: {
     flex: 1,
+    minWidth: 500,
     marginHorizontal: 5, // Add some horizontal spacing between lists
     padding: 10,
     borderRadius: 10, // Optional: Add rounded corners for better UI
