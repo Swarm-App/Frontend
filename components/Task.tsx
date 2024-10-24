@@ -23,6 +23,7 @@ interface PanValue {
 interface DraggableProps {
   onDrop: (dropZoneId: string) => Promise<void>; // Callback for when the item is dropped
   scrollX: number; // Scroll position passed from the TaskBoard
+  taskContainerMinWidth:number;
 }
 
 export default class Draggable extends Component<DraggableProps, DraggableState> {
@@ -73,7 +74,7 @@ export default class Draggable extends Component<DraggableProps, DraggableState>
   };
 
   checkDropZone(x: number, y: number): string {
-    const screenWidth = Math.max(Dimensions.get('window').width, 500 * 3); // Assuming 3 columns
+    const screenWidth = Math.max(Dimensions.get('window').width, this.props.taskContainerMinWidth * 3); // Assuming 3 columns
     const columnWidth = screenWidth / 3;
 
     if (x < columnWidth) {

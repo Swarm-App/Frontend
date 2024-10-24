@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView ,Dimensions} from 'react-native';
 import Draggable from '../components/Task';
 
 const TaskBoard = () => {
@@ -30,6 +30,7 @@ const TaskBoard = () => {
       key={taskId}
       onDrop={(dropZoneId) => handleDrop(dropZoneId, taskId)}
       scrollX={scrollX} // Pass the current scroll offset to the draggable component
+      taskContainerMinWidth={taskContainerMinWidth}
     />
   );
 
@@ -70,6 +71,8 @@ const TaskBoard = () => {
     </View>
   );
 };
+const taskContainerMinWidth = Math.min(Dimensions.get('window').width-30,500);
+
 
 const styles = StyleSheet.create({
   container: {
@@ -94,7 +97,7 @@ const styles = StyleSheet.create({
   },
   dropZone: {
     flex: 1,
-    minWidth: 500,
+    minWidth: taskContainerMinWidth,
     marginHorizontal: 5,
     padding: 10,
     borderRadius: 10,
