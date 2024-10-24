@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Dispatch, SetStateAction } from 'react';
 import {
   StyleSheet,
   PanResponder,
@@ -24,6 +24,8 @@ interface DraggableProps {
   onDrop: (dropZoneId: string) => Promise<void>; // Callback for when the item is dropped
   scrollX: number; // Scroll position passed from the TaskBoard
   taskContainerMinWidth:number;
+  setScrollEnabled:Dispatch<SetStateAction<boolean>>;
+  setInteractionEnabled:Dispatch<SetStateAction<boolean>>;
 }
 
 export default class Draggable extends Component<DraggableProps, DraggableState> {
@@ -42,12 +44,20 @@ export default class Draggable extends Component<DraggableProps, DraggableState>
 
     // Initialize PanResponder with move handling
     this.panResponder = PanResponder.create({
-      onStartShouldSetPanResponder: (e: GestureResponderEvent, gesture: PanResponderGestureState) => true,
+      onStartShouldSetPanResponder: (e: GestureResponderEvent, gesture: PanResponderGestureState) => {
+        this.props.setScrollEnabled(false); // ***Disable scroll when dragging starts***
+        this.props.setInteractionEnabled(false); // ***Disable all interactions***
+        return true;
+      },
       onPanResponderMove: Animated.event(
         [null, { dx: this.state.pan.x, dy: this.state.pan.y }],
         { useNativeDriver: false }
       ),
       onPanResponderRelease: this.handlePanResponderRelease,
+      onPanResponderEnd: () => {
+        this.props.setScrollEnabled(true); // ***Enable scroll when dragging ends***
+        this.props.setInteractionEnabled(true); // ***Enable all interactions***
+      },
     });
   }
 

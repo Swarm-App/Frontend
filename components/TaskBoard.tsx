@@ -11,6 +11,8 @@ const TaskBoard = () => {
 
   // State to track the horizontal scroll offset
   const [scrollX, setScrollX] = useState(0);
+  const [scrollEnabled, setScrollEnabled] = useState(true); // ***New state to control scroll enabling/disabling***
+  const [interactionEnabled, setInteractionEnabled] = useState(true); // ***New state to control all gestures***
 
   const handleDrop = async (dropZoneId: string, taskId: number) => {
     // Remove task from all lists
@@ -31,11 +33,15 @@ const TaskBoard = () => {
       onDrop={(dropZoneId) => handleDrop(dropZoneId, taskId)}
       scrollX={scrollX} // Pass the current scroll offset to the draggable component
       taskContainerMinWidth={taskContainerMinWidth}
+      setScrollEnabled={setScrollEnabled} // ***Passing setScrollEnabled to Draggable***
+      setInteractionEnabled={setInteractionEnabled} // ***Passing interaction control***
     />
   );
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container}
+    pointerEvents={interactionEnabled ? 'auto' : 'none'} // ***Control all touch gestures with pointerEvents***
+    >
       <ScrollView
         horizontal={true}
         contentContainerStyle={styles.boardScrollContainer}
@@ -43,6 +49,7 @@ const TaskBoard = () => {
           // Track the horizontal scroll position
           setScrollX(event.nativeEvent.contentOffset.x);
         }}
+        scrollEnabled={scrollEnabled} // ***Control scroll based on scrollEnabled state***
         scrollEventThrottle={16} // Throttle the scroll event for better performance
       >
         <View style={styles.boardContainer}>
