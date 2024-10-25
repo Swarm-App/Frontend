@@ -28,7 +28,7 @@ interface DraggableProps {
   setInteractionEnabled:Dispatch<SetStateAction<boolean>>;
 }
 
-export default class Draggable extends Component<DraggableProps, DraggableState> {
+export default class DraggableTask extends Component<DraggableProps, DraggableState> {
   private _val: PanValue;
   private panResponder: PanResponderInstance;
 

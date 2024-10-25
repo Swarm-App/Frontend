@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView ,Dimensions} from 'react-native';
-import Draggable from '../components/Task';
+import DraggableTask from '../components/Task';
 
 const TaskBoard = () => {
   const [tasks, setTasks] = useState({
@@ -28,7 +28,7 @@ const TaskBoard = () => {
   };
 
   const renderTask = (taskId: number) => (
-    <Draggable
+    <DraggableTask
       key={taskId}
       onDrop={(dropZoneId) => handleDrop(dropZoneId, taskId)}
       scrollX={scrollX} // Pass the current scroll offset to the draggable component
