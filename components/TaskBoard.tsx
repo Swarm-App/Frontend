@@ -51,25 +51,26 @@ const TaskBoard = () => {
         }}
         scrollEnabled={scrollEnabled} // ***Control scroll based on scrollEnabled state***
         scrollEventThrottle={16} // Throttle the scroll event for better performance
+      
       >
         <View style={styles.boardContainer}>
           <View style={styles.dropZone} id="upcoming">
             <View><Text style={styles.taskListTitle}>Upcoming</Text></View>
-            <ScrollView style={styles.scrollView}>
+            <ScrollView style={styles.scrollView}   bounces={false} >
               {tasks.upcoming.map(renderTask)}
             </ScrollView>
           </View>
 
           <View style={styles.dropZone} id="todo">
             <View><Text style={styles.taskListTitle}>To Do</Text></View>
-            <ScrollView style={styles.scrollView}>
+            <ScrollView style={styles.scrollView}  bounces={false}>
               {tasks.todo.map(renderTask)}
             </ScrollView>
           </View>
 
           <View style={styles.dropZone} id="done">
             <View><Text style={styles.taskListTitle}>Done</Text></View>
-            <ScrollView style={styles.scrollView}>
+            <ScrollView style={styles.scrollView}  bounces={false}>
               {tasks.done.map(renderTask)}
             </ScrollView>
           </View>
