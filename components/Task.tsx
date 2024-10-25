@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Dispatch, SetStateAction } from 'react';
 import {
   StyleSheet,
   PanResponder,
@@ -6,9 +6,9 @@ import {
   GestureResponderEvent,
   PanResponderGestureState,
   PanResponderInstance,
-  Dimensions,
   View,
-  Text
+  Text,
+  Dimensions,
 } from 'react-native';
 
 interface DraggableState {
@@ -18,21 +18,24 @@ interface DraggableState {
 interface PanValue {
   x: number;
   y: number;
-
 }
 
 interface DraggableProps {
   onDrop: (dropZoneId: string) => Promise<void>; // Callback for when the item is dropped
+  scrollX: number; // Scroll position passed from the TaskBoard
+  taskContainerMinWidth:number;
+  setScrollEnabled:Dispatch<SetStateAction<boolean>>;
+  setInteractionEnabled:Dispatch<SetStateAction<boolean>>;
 }
 
-export default class Draggable extends Component<DraggableProps, DraggableState> {
+export default class DraggableTask extends Component<DraggableProps, DraggableState> {
   private _val: PanValue;
   private panResponder: PanResponderInstance;
 
   constructor(props: DraggableProps) {
     super(props);
     this.state = {
-      pan: new Animated.ValueXY()
+      pan: new Animated.ValueXY(),
     };
     this._val = { x: 0, y: 0 };
 
@@ -41,12 +44,20 @@ export default class Draggable extends Component<DraggableProps, DraggableState>
 
     // Initialize PanResponder with move handling
     this.panResponder = PanResponder.create({
-      onStartShouldSetPanResponder: (e: GestureResponderEvent, gesture: PanResponderGestureState) => true,
+      onStartShouldSetPanResponder: (e: GestureResponderEvent, gesture: PanResponderGestureState) => {
+        this.props.setScrollEnabled(false); // ***Disable scroll when dragging starts***
+        this.props.setInteractionEnabled(false); // ***Disable all interactions***
+        return true;
+      },
       onPanResponderMove: Animated.event(
         [null, { dx: this.state.pan.x, dy: this.state.pan.y }],
         { useNativeDriver: false }
       ),
       onPanResponderRelease: this.handlePanResponderRelease,
+      onPanResponderEnd: () => {
+        this.props.setScrollEnabled(true); // ***Enable scroll when dragging ends***
+        this.props.setInteractionEnabled(true); // ***Enable all interactions***
+      },
     });
   }
 
@@ -59,7 +70,10 @@ export default class Draggable extends Component<DraggableProps, DraggableState>
 
     // Handle drop logic asynchronously
     try {
-      const dropZoneId = this.checkDropZone(e.nativeEvent.pageX, e.nativeEvent.pageY);
+      const dropZoneId = this.checkDropZone(
+        e.nativeEvent.pageX + this.props.scrollX, // Add the horizontal scroll offset
+        e.nativeEvent.pageY
+      );
       await this.props.onDrop(dropZoneId);
     } catch (error) {
       console.error("Error during drop:", error);
@@ -70,10 +84,8 @@ export default class Draggable extends Component<DraggableProps, DraggableState>
   };
 
   checkDropZone(x: number, y: number): string {
-    const screenWidth = Dimensions.get('window').width;
+    const screenWidth = Math.max(Dimensions.get('window').width, this.props.taskContainerMinWidth * 3); // Assuming 3 columns
     const columnWidth = screenWidth / 3;
-    console.log('columnWidth=' + columnWidth);
-    console.log(x);
 
     if (x < columnWidth) {
       return 'upcoming'; // Left column
@@ -90,17 +102,17 @@ export default class Draggable extends Component<DraggableProps, DraggableState>
     };
 
     return (
-    <Animated.View
+      <Animated.View
         {...this.panResponder.panHandlers}
         style={[panStyle, styles.kanbanCard]}
       >
-    <View style={styles.cardHeader}>
-      <Text style={styles.cardTitle}>Task Title</Text>
-    </View>
-    <View style={styles.cardContent}>
-      <Text style={styles.cardDescription}>This is a description of the task.</Text>
-    </View>
-  </Animated.View>
+        <View style={styles.cardHeader}>
+          <Text style={styles.cardTitle}>Task Title</Text>
+        </View>
+        <View style={styles.cardContent}>
+          <Text style={styles.cardDescription}>This is a description of the task.</Text>
+        </View>
+      </Animated.View>
     );
   }
 }
@@ -108,35 +120,31 @@ export default class Draggable extends Component<DraggableProps, DraggableState>
 const styles = StyleSheet.create({
   kanbanCard: {
     flex: 1,
-            // Adjust the height as necessary
-    backgroundColor: '#f9f9f9',  // Light background color for a clean look
-    borderRadius: 5,       // Slight border radius for modern look
-    shadowColor: '#000',   // Shadow for subtle elevation effect
+    backgroundColor: '#f9f9f9',
+    borderRadius: 5,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,    // Light shadow
+    shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3,          // Slight elevation for Android
-    padding: 10,           // Padding for inner content
-    marginVertical: 10,    // Space between cards
+    elevation: 3,
+    padding: 10,
+    marginVertical: 10,
   },
   cardHeader: {
     borderBottomWidth: 1,
-    borderBottomColor: '#ddd',  // Line to separate header
+    borderBottomColor: '#ddd',
     paddingBottom: 5,
   },
   cardTitle: {
-    fontSize: 18,          // Larger font for the task title
-    fontWeight: 'bold',    // Bold to make it stand out
-    color: '#333',         // Darker text color
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
   },
   cardContent: {
     paddingTop: 10,
   },
   cardDescription: {
     fontSize: 14,
-    color: '#666',         // Lighter color for description text
+    color: '#666',
   },
 });
-
-
-
