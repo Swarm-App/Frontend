@@ -2,12 +2,35 @@ import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView ,Dimensions} from 'react-native';
 import DraggableTask from '../components/Task';
 
+interface Task {
+  id: number;
+  title: string;
+  description: string;
+}
+interface Tasks {
+  upcoming: Task[];
+  todo: Task[];
+  done: Task[];
+}
+
+
 const TaskBoard = () => {
-  const [tasks, setTasks] = useState({
-    upcoming: [1, 2, 6],
-    todo: [3, 4],
-    done: [5],
+  const [tasks, setTasks] = useState<Tasks>({
+    upcoming: [
+      { id: 1, title: 'Task 1', description: 'Description for Task 1' },
+      { id: 2, title: 'Task 2', description: 'Description for Task 2' },
+      // Add other tasks here
+    ],
+    todo: [
+      { id: 3, title: 'Task 3', description: 'Description for Task 3' },
+      // Add other tasks here
+    ],
+    done: [
+      { id: 5, title: 'Task 5', description: 'Description for Task 5' },
+      // Add other tasks here
+    ],
   });
+  
 
   // State to track the horizontal scroll offset
   const [scrollX, setScrollX] = useState(0);
@@ -17,25 +40,31 @@ const TaskBoard = () => {
   const handleDrop = async (dropZoneId: string, taskId: number) => {
     // Remove task from all lists
     let updatedTasks = {
-      upcoming: tasks.upcoming.filter(id => id !== taskId),
-      todo: tasks.todo.filter(id => id !== taskId),
-      done: tasks.done.filter(id => id !== taskId),
+      upcoming: tasks.upcoming.filter(t => t.id !== taskId),
+      todo: tasks.todo.filter(t => t.id !== taskId),
+      done: tasks.done.filter(t => t.id !== taskId),
     };
 
     // Add task to the correct list
-    updatedTasks[dropZoneId as keyof typeof updatedTasks].push(taskId);
-    setTasks(updatedTasks);
+    const movedTask = [...tasks.upcoming, ...tasks.todo, ...tasks.done].find(task => task.id === taskId);
+    if (movedTask) {
+      updatedTasks[dropZoneId as keyof Tasks].push(movedTask);
+      setTasks(updatedTasks);
+    }
   };
 
-  const renderTask = (taskId: number) => (
+  const renderTask = (task: Task) => (
     <DraggableTask
-      key={taskId}
-      onDrop={(dropZoneId) => handleDrop(dropZoneId, taskId)}
-      scrollX={scrollX} // Pass the current scroll offset to the draggable component
-      taskContainerMinWidth={taskContainerMinWidth}
-      setScrollEnabled={setScrollEnabled} // ***Passing setScrollEnabled to Draggable***
-      setInteractionEnabled={setInteractionEnabled} // ***Passing interaction control***
-    />
+    key={task.id}
+    taskId={task.id}
+    title={task.title}
+    description={task.description}
+    onDrop={(dropZoneId) => handleDrop(dropZoneId, task.id)}
+    scrollX={scrollX}
+    taskContainerMinWidth={taskContainerMinWidth}
+    setScrollEnabled={setScrollEnabled}
+    setInteractionEnabled={setInteractionEnabled}
+  />
   );
 
   return (
