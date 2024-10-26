@@ -21,11 +21,17 @@ interface PanValue {
 }
 
 interface DraggableProps {
+
+  taskId: number;
+  title: string;
+  description: string;
+  
   onDrop: (dropZoneId: string) => Promise<void>; // Callback for when the item is dropped
   scrollX: number; // Scroll position passed from the TaskBoard
   taskContainerMinWidth:number;
   setScrollEnabled:Dispatch<SetStateAction<boolean>>;
   setInteractionEnabled:Dispatch<SetStateAction<boolean>>;
+
 }
 
 export default class DraggableTask extends Component<DraggableProps, DraggableState> {
@@ -102,17 +108,14 @@ export default class DraggableTask extends Component<DraggableProps, DraggableSt
     };
 
     return (
-      <Animated.View
-        {...this.panResponder.panHandlers}
-        style={[panStyle, styles.kanbanCard]}
-      >
-        <View style={styles.cardHeader}>
-          <Text style={styles.cardTitle}>Task Title</Text>
-        </View>
-        <View style={styles.cardContent}>
-          <Text style={styles.cardDescription}>This is a description of the task.</Text>
-        </View>
-      </Animated.View>
+      <Animated.View {...this.panResponder.panHandlers} style={[panStyle, styles.kanbanCard]}>
+      <View style={styles.cardHeader}>
+        <Text style={styles.cardTitle}>{this.props.title}</Text>
+      </View>
+      <View style={styles.cardContent}>
+        <Text style={styles.cardDescription}>{this.props.description}</Text>
+      </View>
+    </Animated.View>
     );
   }
 }
