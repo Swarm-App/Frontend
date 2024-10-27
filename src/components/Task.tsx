@@ -1,4 +1,4 @@
-import React, { Component, Dispatch, SetStateAction } from 'react';
+import React, { Component } from 'react';
 import {
   StyleSheet,
   PanResponder,
@@ -8,7 +8,11 @@ import {
   PanResponderInstance,
   View,
   Text,
+  Button,
+  TouchableOpacity
 } from 'react-native';
+import EditTaskModal from './Modals/EditTaskModal';
+import { TaskRepository } from '../data/repositories/TaskRepository';
 
 interface DraggableProps {
   taskId: number;
@@ -17,13 +21,19 @@ interface DraggableProps {
   onDrop: (PageX: number) => Promise<void>;
   scrollX: number;
   taskContainerMinWidth: number;
-  setScrollEnabled: Dispatch<SetStateAction<boolean>>;
-  setInteractionEnabled: Dispatch<SetStateAction<boolean>>;
+  setScrollEnabled: (enabled: boolean) => void;
+  setInteractionEnabled: (enabled: boolean) => void;
+  onSave: (taskId: number, newTitle: string, newDescription: string) => void; 
 }
 
 interface DraggableState {
   pan: Animated.ValueXY;
+  isModalVisible: boolean;
+  title: string;
+  description: string;
 }
+
+
 
 export default class DraggableTask extends Component<DraggableProps, DraggableState> {
   private _val = { x: 0, y: 0 };
@@ -33,8 +43,13 @@ export default class DraggableTask extends Component<DraggableProps, DraggableSt
     super(props);
     this.state = {
       pan: new Animated.ValueXY(),
+      isModalVisible: false,
+      title: props.title,
+      description: props.description,
     };
+
     this.state.pan.addListener((value) => (this._val = value));
+
     this.panResponder = PanResponder.create({
       onStartShouldSetPanResponder: () => {
         this.props.setScrollEnabled(false);
@@ -52,22 +67,36 @@ export default class DraggableTask extends Component<DraggableProps, DraggableSt
     });
   }
 
+  handleSave = (newTitle: string, newDescription: string) => {
+    this.props.onSave(this.props.taskId, newTitle, newDescription);
+    this.setState({
+      title: newTitle,
+      description: newDescription,
+      isModalVisible: false,
+    });
+  };
+
   handlePanResponderRelease = async (e: GestureResponderEvent, gesture: PanResponderGestureState) => {
     Animated.spring(this.state.pan, {
       toValue: { x: 0, y: 0 },
       useNativeDriver: false,
     }).start();
 
-    try
-    {
+    try {
       await this.props.onDrop(e.nativeEvent.pageX);
-    }
-    catch(error) 
-    {
+    } catch (error) {
       console.error("Error during drop:", error);
     }
-
   };
+
+  handleOpenModal = () => {
+    this.setState({ isModalVisible: true });
+  };
+
+  handleCloseModal = () => {
+    this.setState({ isModalVisible: false });
+  };
+
 
   render() {
     const panStyle = {
@@ -75,14 +104,31 @@ export default class DraggableTask extends Component<DraggableProps, DraggableSt
     };
 
     return (
-      <Animated.View {...this.panResponder.panHandlers} style={[panStyle, styles.kanbanCard]}>
-        <View style={styles.cardHeader}>
-          <Text style={styles.cardTitle}>{this.props.title}</Text>
-        </View>
-        <View style={styles.cardContent}>
-          <Text style={styles.cardDescription}>{this.props.description}</Text>
-        </View>
-      </Animated.View>
+      <>
+          <Animated.View {...this.panResponder.panHandlers} style={[panStyle, styles.kanbanCard]}>
+            <View style={styles.cardHeader}>
+              <Text style={styles.cardTitle}>{this.state.title}</Text>
+            </View>
+            <View style={styles.cardContent}>
+              <Text style={styles.cardDescription}>{this.state.description}</Text>
+            </View>
+            <View style={styles.buttonContainer}>
+              <Button 
+                title="Edit" 
+                onPress={this.handleOpenModal} 
+                color="#007BFF" // Optional: Change the button color
+              />
+            </View>
+          </Animated.View>
+
+        <EditTaskModal
+          visible={this.state.isModalVisible}
+          title={this.state.title}
+          description={this.state.description}
+          onClose={this.handleCloseModal}
+          onSave={this.handleSave}
+        />
+      </>
     );
   }
 }
@@ -116,5 +162,10 @@ const styles = StyleSheet.create({
   cardDescription: {
     fontSize: 14,
     color: '#666',
+  },
+  buttonContainer: {
+    position: 'absolute',
+    bottom: 1, // Adjust the distance from the bottom as needed
+    right: 1, // Adjust the distance from the right as needed
   },
 });

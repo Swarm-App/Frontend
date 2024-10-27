@@ -6,7 +6,7 @@ import { Task, Tasks,TaskStatus } from '../domain/models/Task';
 import { TaskRepository } from '../data/repositories/TaskRepository';
 import { taskBoardStyles as styles, taskContainerMinWidth} from './styles/TaskBoardStyles';
 import AddTaskButton from './Buttons/AddTaskButton';
-import AddTaskModal from './AddTaskModal';
+import AddTaskModal from './Modals/AddTaskModal';
 
 const TaskBoard: React.FC = () => {
   const [tasks, setTasks] = useState<Tasks>({
@@ -23,6 +23,7 @@ const TaskBoard: React.FC = () => {
 
 
 
+
   useEffect(() => {
     const initialTasks = taskRepository.getTasks();
     setTasks(initialTasks);
@@ -33,6 +34,12 @@ const TaskBoard: React.FC = () => {
     handleDrop(status, taskId);
     const tsks=taskRepository.getTasks();
     setTasks(tsks);
+  };
+
+  const onSaveTask = (taskId: number, newTitle: string, newDescription: string) => {
+    taskRepository.editTask(taskId, { title: newTitle, description: newDescription });
+    const updatedTasks = taskRepository.getTasks();
+    setTasks(updatedTasks);
   };
 
   const renderTask = (task: Task) => (
@@ -46,6 +53,7 @@ const TaskBoard: React.FC = () => {
       taskContainerMinWidth={taskContainerMinWidth}
       setScrollEnabled={setScrollEnabled}
       setInteractionEnabled={setInteractionEnabled}
+      onSave={onSaveTask} 
     />
   );
 
