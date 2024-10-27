@@ -66,12 +66,6 @@ export default class DraggableTask extends Component<DraggableProps, DraggableSt
     {
       console.error("Error during drop:", error);
     }
-    
-
-
-
-
-
 
   };
 
