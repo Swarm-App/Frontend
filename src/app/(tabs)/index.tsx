@@ -4,7 +4,7 @@ import TaskBoard from '../../components/TaskBoard'; // Ensure the path is correc
 export default function TabOneScreen() {
   return (
     <ImageBackground
-      source={require('../../assets/images/background.jpg')} // Path to your background image
+      source={require('../../../assets/images/background.jpg')} // Path to your background image
       style={styles.backgroundImage}
       resizeMode="cover" // Adjusts the resizing mode to cover the entire screen
     >
