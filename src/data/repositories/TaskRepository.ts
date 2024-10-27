@@ -1,8 +1,6 @@
 import { Filter } from '@mui/icons-material';
 import { Tasks, Task,TaskStatus} from '../../domain/models/Task';
 
-
-
 export class TaskRepository {
   private tasks: Task[] =  [
       { id: 1, title: 'Task 1', description: 'Description for Task 1', status: TaskStatus.UPCOMING},
@@ -46,6 +44,4 @@ export class TaskRepository {
     }
     return false; // Return false if task with given id is not found
   }
-
-
 }
