@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Dimensions } from 'react-native';
 import DraggableTask from './Task';
-import { handleDrop, checkDropZone } from '../domain/useCases/handleDrop';
-import { Task, Tasks } from '../domain/models/Task';
+import { handleDrop, checkDropZone as checkStatus } from '../domain/useCases/handleDrop';
+import { Task, Tasks,TaskStatus } from '../domain/models/Task';
 import { TaskRepository } from '../data/repositories/TaskRepository';
+import { taskBoardStyles as styles, taskContainerMinWidth} from './styles/TaskBoardStyles';
+import AddTaskButton from './Buttons/AddTaskButton';
+import AddTaskModal from './AddTaskModal';
 
 const TaskBoard: React.FC = () => {
   const [tasks, setTasks] = useState<Tasks>({
@@ -15,17 +18,21 @@ const TaskBoard: React.FC = () => {
   const [scrollX, setScrollX] = useState(0);
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const [interactionEnabled, setInteractionEnabled] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+  const taskRepository =TaskRepository.getInstance();
+
+
 
   useEffect(() => {
-    const taskRepository = new TaskRepository();
     const initialTasks = taskRepository.getTasks();
     setTasks(initialTasks);
   }, []);
 
   const onDropTask = async (pageX: number, taskId: number) => {
-    const dropZoneId = checkDropZone(pageX + scrollX, taskContainerMinWidth);
-    const updatedTasks = handleDrop(tasks, dropZoneId, taskId);
-    setTasks(updatedTasks);
+    const status = checkStatus(pageX + scrollX, taskContainerMinWidth);
+    handleDrop(status, taskId);
+    const tsks=taskRepository.getTasks();
+    setTasks(tsks);
   };
 
   const renderTask = (task: Task) => (
@@ -41,6 +48,14 @@ const TaskBoard: React.FC = () => {
       setInteractionEnabled={setInteractionEnabled}
     />
   );
+
+  const addNewTask = (title: string, description: string) => {
+    const newTask: Task = { id: Date.now(), title, description ,status:TaskStatus.UPCOMING};
+    taskRepository.addTask(newTask);
+    const tsks=taskRepository.getTasks();
+    setTasks(tsks);
+    setModalVisible(false);
+  };
 
   return (
 <View style={styles.container} pointerEvents={interactionEnabled ? 'auto' : 'none'}>
@@ -85,49 +100,15 @@ const TaskBoard: React.FC = () => {
           </View>
         </View>
       </ScrollView>
+      <AddTaskButton onPress={() => setModalVisible(true)} />
+      <AddTaskModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onAdd={addNewTask}
+      />
     </View>
+    
   );
 };
 
 export default TaskBoard;
-
-
-const taskContainerMinWidth = Math.min(Dimensions.get('window').width - 30, 500);
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 10,
-  },
-  boardContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  taskListTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    textAlignVertical: 'center',
-    textAlign: 'center',
-    color: '#ffffff',
-  },
-  boardScrollContainer: {
-    flexGrow: 1,
-  },
-  dropZone: {
-    flex: 1,
-    minWidth: taskContainerMinWidth,
-    marginHorizontal: 5,
-    padding: 10,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: 'gray',
-    userSelect: 'none',
-    backgroundColor: 'rgba(0, 0, 0, 0.2)',
-  },
-  scrollView: {
-    flexGrow: 1,
-  },
-});
-
