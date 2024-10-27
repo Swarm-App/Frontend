@@ -1,39 +1,55 @@
 // src/domain/useCases/handleDrop.ts
-import { Tasks } from '../models/Task';
+import { Tasks,Task,TaskStatus } from '../models/Task';
 import {Dimensions } from 'react-native';
+import { TaskRepository } from '../../data/repositories/TaskRepository';
 
 
-export function handleDrop(
-  tasks: Tasks,
-  dropZoneId: string,
-  taskId: number
-): Tasks {
-  const updatedTasks = {
-    upcoming: tasks.upcoming.filter((task) => task.id !== taskId),
-    todo: tasks.todo.filter((task) => task.id !== taskId),
-    done: tasks.done.filter((task) => task.id !== taskId),
-  };
 
-  const movedTask = [...tasks.upcoming, ...tasks.todo, ...tasks.done].find(
-    (task) => task.id === taskId
-  );
+const taskRepository =TaskRepository.getInstance();
 
-  if (movedTask) {
-    updatedTasks[dropZoneId as keyof Tasks].push(movedTask);
+// export function handleDrop(
+//   tasks: Tasks,
+//   dropZoneId: string,
+//   taskId: number
+// ): Tasks {
+//   const updatedTasks = {
+//     upcoming: tasks.upcoming.filter((task) => task.id !== taskId),
+//     todo: tasks.todo.filter((task) => task.id !== taskId),
+//     done: tasks.done.filter((task) => task.id !== taskId),
+//   };
+
+//   const movedTask = [...tasks.upcoming, ...tasks.todo, ...tasks.done].find(
+//     (task) => task.id === taskId
+//   );
+
+//   if (movedTask) {
+//     updatedTasks[dropZoneId as keyof Tasks].push(movedTask);
+//   }
+
+//   return updatedTasks;
+// }
+
+
+export function handleDrop(status: TaskStatus,taskId: number)
+  {
+  const task=taskRepository.getTaskById(taskId);
+  if(task)
+    {
+      task.status=status
+      taskRepository.editTask(taskId,task)
+    }
   }
 
-  return updatedTasks;
-}
 
-export function checkDropZone(x: number, taskContainerMinWidth: number): string {
+export function checkDropZone(x: number, taskContainerMinWidth: number): TaskStatus {
   const screenWidth = Math.max(Dimensions.get('window').width, taskContainerMinWidth * 3);
   const columnWidth = screenWidth / 3;
 
   if (x < columnWidth) {
-    return 'upcoming'; // Left column
+    return TaskStatus.UPCOMING; // Left column
   } else if (x < columnWidth * 2) {
-    return 'todo'; // Middle column
+    return TaskStatus.TODO; // Middle column
   } else {
-    return 'done'; // Right column
+    return TaskStatus.DONE; // Right column
   }
 }

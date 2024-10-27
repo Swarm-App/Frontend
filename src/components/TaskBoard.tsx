@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Dimensions } from 'react-native';
 import DraggableTask from './Task';
-import { handleDrop, checkDropZone } from '../domain/useCases/handleDrop';
+import { handleDrop, checkDropZone as checkStatus } from '../domain/useCases/handleDrop';
 import { Task, Tasks,TaskStatus } from '../domain/models/Task';
 import { TaskRepository } from '../data/repositories/TaskRepository';
 import { taskBoardStyles as styles, taskContainerMinWidth} from './styles/TaskBoardStyles';
@@ -19,18 +19,20 @@ const TaskBoard: React.FC = () => {
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const [interactionEnabled, setInteractionEnabled] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
+  const taskRepository =TaskRepository.getInstance();
+
 
 
   useEffect(() => {
-    const taskRepository = new TaskRepository();
     const initialTasks = taskRepository.getTasks();
     setTasks(initialTasks);
   }, []);
 
   const onDropTask = async (pageX: number, taskId: number) => {
-    const dropZoneId = checkDropZone(pageX + scrollX, taskContainerMinWidth);
-    const updatedTasks = handleDrop(tasks, dropZoneId, taskId);
-    setTasks(updatedTasks);
+    const status = checkStatus(pageX + scrollX, taskContainerMinWidth);
+    handleDrop(status, taskId);
+    const tsks=taskRepository.getTasks();
+    setTasks(tsks);
   };
 
   const renderTask = (task: Task) => (
@@ -49,7 +51,9 @@ const TaskBoard: React.FC = () => {
 
   const addNewTask = (title: string, description: string) => {
     const newTask: Task = { id: Date.now(), title, description ,status:TaskStatus.UPCOMING};
-    setTasks((prevTasks) => ({ ...prevTasks, upcoming: [...prevTasks.upcoming, newTask] }));
+    taskRepository.addTask(newTask);
+    const tsks=taskRepository.getTasks();
+    setTasks(tsks);
     setModalVisible(false);
   };
 
