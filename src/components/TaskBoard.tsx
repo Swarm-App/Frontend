@@ -41,6 +41,11 @@ const TaskBoard: React.FC = () => {
     const updatedTasks = taskRepository.getTasks();
     setTasks(updatedTasks);
   };
+  const onDeleteTask = (taskId: number) => {
+    taskRepository.deleteTask(taskId);
+    const updatedTasks = taskRepository.getTasks();
+    setTasks(updatedTasks);
+  };
 
   const renderTask = (task: Task) => (
     <DraggableTask
@@ -54,6 +59,7 @@ const TaskBoard: React.FC = () => {
       setScrollEnabled={setScrollEnabled}
       setInteractionEnabled={setInteractionEnabled}
       onSave={onSaveTask} 
+      onDelete={onDeleteTask}
     />
   );
 

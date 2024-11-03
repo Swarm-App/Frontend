@@ -9,10 +9,9 @@ import {
   View,
   Text,
   Button,
-  TouchableOpacity
 } from 'react-native';
 import EditTaskModal from './Modals/EditTaskModal';
-import { TaskRepository } from '../data/repositories/TaskRepository';
+import DeleteTaskModal from './Modals/DeleteTaskModal';
 
 interface DraggableProps {
   taskId: number;
@@ -24,11 +23,13 @@ interface DraggableProps {
   setScrollEnabled: (enabled: boolean) => void;
   setInteractionEnabled: (enabled: boolean) => void;
   onSave: (taskId: number, newTitle: string, newDescription: string) => void; 
+  onDelete:(taskId:number)=>void;
 }
 
 interface DraggableState {
   pan: Animated.ValueXY;
-  isModalVisible: boolean;
+  isEditModalVisible: boolean;
+  isDeleteModalVisible:boolean;
   title: string;
   description: string;
 }
@@ -43,7 +44,8 @@ export default class DraggableTask extends Component<DraggableProps, DraggableSt
     super(props);
     this.state = {
       pan: new Animated.ValueXY(),
-      isModalVisible: false,
+      isEditModalVisible: false,
+      isDeleteModalVisible: false,
       title: props.title,
       description: props.description,
     };
@@ -67,12 +69,19 @@ export default class DraggableTask extends Component<DraggableProps, DraggableSt
     });
   }
 
-  handleSave = (newTitle: string, newDescription: string) => {
+  handleSaveEdit = (newTitle: string, newDescription: string) => {
     this.props.onSave(this.props.taskId, newTitle, newDescription);
     this.setState({
       title: newTitle,
       description: newDescription,
-      isModalVisible: false,
+      isEditModalVisible: false,
+    });
+  };
+
+  handleSaveDelete = () => {
+    this.props.onDelete(this.props.taskId);
+    this.setState({
+      isDeleteModalVisible: false,
     });
   };
 
@@ -89,12 +98,20 @@ export default class DraggableTask extends Component<DraggableProps, DraggableSt
     }
   };
 
-  handleOpenModal = () => {
-    this.setState({ isModalVisible: true });
+  handleOpenEditModal = () => {
+    this.setState({ isEditModalVisible: true });
   };
 
-  handleCloseModal = () => {
-    this.setState({ isModalVisible: false });
+  handleOpenDeleteModal = () => {
+    this.setState({ isDeleteModalVisible: true });
+  };
+
+  handleCloseEditModal = () => {
+    this.setState({ isEditModalVisible: false });
+  };
+
+  handleCloseDeleteModal = () => {
+    this.setState({ isDeleteModalVisible: false });
   };
 
 
@@ -115,18 +132,28 @@ export default class DraggableTask extends Component<DraggableProps, DraggableSt
             <View style={styles.buttonContainer}>
               <Button 
                 title="Edit" 
-                onPress={this.handleOpenModal} 
+                onPress={this.handleOpenEditModal} 
+                color="#007BFF" // Optional: Change the button color
+              />
+              <Button 
+                title="Delete" 
+                onPress={this.handleOpenDeleteModal} 
                 color="#007BFF" // Optional: Change the button color
               />
             </View>
           </Animated.View>
 
         <EditTaskModal
-          visible={this.state.isModalVisible}
+          visible={this.state.isEditModalVisible}
           title={this.state.title}
           description={this.state.description}
-          onClose={this.handleCloseModal}
-          onSave={this.handleSave}
+          onClose={this.handleCloseEditModal}
+          onSave={this.handleSaveEdit}
+        />
+        <DeleteTaskModal
+          visible={this.state.isDeleteModalVisible}
+          onClose={this.handleCloseDeleteModal}
+          onDelete={this.handleSaveDelete}
         />
       </>
     );
