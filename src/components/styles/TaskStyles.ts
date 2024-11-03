@@ -33,8 +33,10 @@ export const taskStyles=StyleSheet.create({
       color: '#666',
     },
     buttonContainer: {
-      position: 'absolute',
-      bottom: 1, // Adjust the distance from the bottom as needed
-      right: 1, // Adjust the distance from the right as needed
-    },
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+      },
+    iconButton: {
+        padding: 10, // Adjust padding as needed
+      },
   });

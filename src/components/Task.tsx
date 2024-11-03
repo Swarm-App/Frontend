@@ -8,11 +8,12 @@ import {
   PanResponderInstance,
   View,
   Text,
-  Button,
+  Pressable,
 } from 'react-native';
 import EditTaskModal from './Modals/EditTaskModal';
 import DeleteTaskModal from './Modals/DeleteTaskModal';
 import { taskStyles as styles} from './styles/TaskStyles';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 
 interface DraggableProps {
@@ -121,30 +122,32 @@ export default class DraggableTask extends Component<DraggableProps, DraggableSt
     const panStyle = {
       transform: this.state.pan.getTranslateTransform(),
     };
-
+  
     return (
       <>
-          <Animated.View {...this.panResponder.panHandlers} style={[panStyle, styles.kanbanCard]}>
-            <View style={styles.cardHeader}>
-              <Text style={styles.cardTitle}>{this.state.title}</Text>
-            </View>
-            <View style={styles.cardContent}>
-              <Text style={styles.cardDescription}>{this.state.description}</Text>
-            </View>
-            <View style={styles.buttonContainer}>
-              <Button 
-                title="Edit" 
-                onPress={this.handleOpenEditModal} 
-                color="#007BFF" // Optional: Change the button color
-              />
-              <Button 
-                title="Delete" 
-                onPress={this.handleOpenDeleteModal} 
-                color="#007BFF" // Optional: Change the button color
-              />
-            </View>
-          </Animated.View>
-
+        <Animated.View {...this.panResponder.panHandlers} style={[panStyle, styles.kanbanCard]}>
+          <View style={styles.cardHeader}>
+            <Text style={styles.cardTitle}>{this.state.title}</Text>
+          </View>
+          <View style={styles.cardContent}>
+            <Text style={styles.cardDescription}>{this.state.description}</Text>
+          </View>
+          <View style={styles.buttonContainer}>
+            <Pressable onPress={this.handleOpenEditModal} style={({ pressed }) => [
+                styles.iconButton, 
+                { opacity: pressed ? 0.6 : 1 }
+              ]}>
+              <Icon name="edit" size={24} color="#007BFF" /> 
+            </Pressable>
+            <Pressable onPress={this.handleOpenDeleteModal} style={({ pressed }) => [
+                styles.iconButton, 
+                { opacity: pressed ? 0.6 : 1 }
+              ]}>
+              <Icon name="trash" size={24} color="red" /> 
+            </Pressable>
+          </View>
+        </Animated.View>
+  
         <EditTaskModal
           visible={this.state.isEditModalVisible}
           title={this.state.title}
@@ -160,4 +163,5 @@ export default class DraggableTask extends Component<DraggableProps, DraggableSt
       </>
     );
   }
+  
 }
