@@ -8,11 +8,13 @@ import {
   PanResponderInstance,
   View,
   Text,
-  Button,
-  TouchableOpacity
+  Pressable,
 } from 'react-native';
 import EditTaskModal from './Modals/EditTaskModal';
-import { TaskRepository } from '../data/repositories/TaskRepository';
+import DeleteTaskModal from './Modals/DeleteTaskModal';
+import { taskStyles as styles} from './styles/TaskStyles';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 
 interface DraggableProps {
   taskId: number;
@@ -24,11 +26,13 @@ interface DraggableProps {
   setScrollEnabled: (enabled: boolean) => void;
   setInteractionEnabled: (enabled: boolean) => void;
   onSave: (taskId: number, newTitle: string, newDescription: string) => void; 
+  onDelete:(taskId:number)=>void;
 }
 
 interface DraggableState {
   pan: Animated.ValueXY;
-  isModalVisible: boolean;
+  isEditModalVisible: boolean;
+  isDeleteModalVisible:boolean;
   title: string;
   description: string;
 }
@@ -43,7 +47,8 @@ export default class DraggableTask extends Component<DraggableProps, DraggableSt
     super(props);
     this.state = {
       pan: new Animated.ValueXY(),
-      isModalVisible: false,
+      isEditModalVisible: false,
+      isDeleteModalVisible: false,
       title: props.title,
       description: props.description,
     };
@@ -67,12 +72,19 @@ export default class DraggableTask extends Component<DraggableProps, DraggableSt
     });
   }
 
-  handleSave = (newTitle: string, newDescription: string) => {
+  handleSaveEdit = (newTitle: string, newDescription: string) => {
     this.props.onSave(this.props.taskId, newTitle, newDescription);
     this.setState({
       title: newTitle,
       description: newDescription,
-      isModalVisible: false,
+      isEditModalVisible: false,
+    });
+  };
+
+  handleSaveDelete = () => {
+    this.props.onDelete(this.props.taskId);
+    this.setState({
+      isDeleteModalVisible: false,
     });
   };
 
@@ -89,12 +101,20 @@ export default class DraggableTask extends Component<DraggableProps, DraggableSt
     }
   };
 
-  handleOpenModal = () => {
-    this.setState({ isModalVisible: true });
+  handleOpenEditModal = () => {
+    this.setState({ isEditModalVisible: true });
   };
 
-  handleCloseModal = () => {
-    this.setState({ isModalVisible: false });
+  handleOpenDeleteModal = () => {
+    this.setState({ isDeleteModalVisible: true });
+  };
+
+  handleCloseEditModal = () => {
+    this.setState({ isEditModalVisible: false });
+  };
+
+  handleCloseDeleteModal = () => {
+    this.setState({ isDeleteModalVisible: false });
   };
 
 
@@ -102,70 +122,46 @@ export default class DraggableTask extends Component<DraggableProps, DraggableSt
     const panStyle = {
       transform: this.state.pan.getTranslateTransform(),
     };
-
+  
     return (
       <>
-          <Animated.View {...this.panResponder.panHandlers} style={[panStyle, styles.kanbanCard]}>
-            <View style={styles.cardHeader}>
-              <Text style={styles.cardTitle}>{this.state.title}</Text>
-            </View>
-            <View style={styles.cardContent}>
-              <Text style={styles.cardDescription}>{this.state.description}</Text>
-            </View>
-            <View style={styles.buttonContainer}>
-              <Button 
-                title="Edit" 
-                onPress={this.handleOpenModal} 
-                color="#007BFF" // Optional: Change the button color
-              />
-            </View>
-          </Animated.View>
-
+        <Animated.View {...this.panResponder.panHandlers} style={[panStyle, styles.kanbanCard]}>
+          <View style={styles.cardHeader}>
+            <Text style={styles.cardTitle}>{this.state.title}</Text>
+          </View>
+          <View style={styles.cardContent}>
+            <Text style={styles.cardDescription}>{this.state.description}</Text>
+          </View>
+          <View style={styles.buttonContainer}>
+            <Pressable onPress={this.handleOpenEditModal} style={({ pressed }) => [
+                styles.iconButton, 
+                { opacity: pressed ? 0.6 : 1 }
+              ]}>
+              <Icon name="edit" size={24} color="#007BFF" /> 
+            </Pressable>
+            <Pressable onPress={this.handleOpenDeleteModal} style={({ pressed }) => [
+                styles.iconButton, 
+                { opacity: pressed ? 0.6 : 1 }
+              ]}>
+              <Icon name="trash" size={24} color="red" /> 
+            </Pressable>
+          </View>
+        </Animated.View>
+  
         <EditTaskModal
-          visible={this.state.isModalVisible}
+          visible={this.state.isEditModalVisible}
           title={this.state.title}
           description={this.state.description}
-          onClose={this.handleCloseModal}
-          onSave={this.handleSave}
+          onClose={this.handleCloseEditModal}
+          onSave={this.handleSaveEdit}
+        />
+        <DeleteTaskModal
+          visible={this.state.isDeleteModalVisible}
+          onClose={this.handleCloseDeleteModal}
+          onDelete={this.handleSaveDelete}
         />
       </>
     );
   }
+  
 }
-
-const styles = StyleSheet.create({
-  kanbanCard: {
-    flex: 1,
-    backgroundColor: '#f9f9f9',
-    borderRadius: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    padding: 10,
-    marginVertical: 10,
-  },
-  cardHeader: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-    paddingBottom: 5,
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  cardContent: {
-    paddingTop: 10,
-  },
-  cardDescription: {
-    fontSize: 14,
-    color: '#666',
-  },
-  buttonContainer: {
-    position: 'absolute',
-    bottom: 1, // Adjust the distance from the bottom as needed
-    right: 1, // Adjust the distance from the right as needed
-  },
-});
