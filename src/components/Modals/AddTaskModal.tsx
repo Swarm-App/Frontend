@@ -15,12 +15,15 @@ const AddTaskModal: React.FC<{ visible: boolean; onClose: () => void; onAdd: (ti
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <View style={styles.modalContainer}>
-        <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>New Task</Text>
-          <TextInput style={styles.input} placeholder="Title" value={title} onChangeText={setTitle} />
-          <TextInput style={styles.input} placeholder="Description" value={description} onChangeText={setDescription} />
-          <Button title="Add Task" onPress={handleAdd} />
-          <Button title="Cancel" onPress={onClose} color="red" />
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>New Task</Text>
+            <TextInput style={styles.input} placeholder="Title" value={title} onChangeText={setTitle} />
+            <TextInput style={styles.input} placeholder="Description" value={description} onChangeText={setDescription} />
+            <View style={styles.buttonContainer}>
+
+            <Button title="Add Task" onPress={handleAdd} />
+            <Button title="Cancel" onPress={onClose} color="red" />
+          </View>
         </View>
       </View>
     </Modal>

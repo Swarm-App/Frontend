@@ -1,6 +1,7 @@
 // EditTaskModal.tsx
 import React, { useState } from 'react';
 import { Modal, View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { modalStyles as styles } from '../styles/ModalStyles';
 
 interface EditTaskModalProps {
   visible: boolean;
@@ -31,12 +32,5 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ visible, title, descripti
   );
 };
 
-const styles = StyleSheet.create({
-  modalContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' },
-  modalContent: { width: '80%', padding: 20, backgroundColor: 'white', borderRadius: 8 },
-  modalTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 10 },
-  input: { borderWidth: 1, padding: 10, marginVertical: 10, borderRadius: 4, borderColor: '#ccc' },
-  buttonContainer: { flexDirection: 'row', justifyContent: 'space-between' }
-});
 
 export default EditTaskModal;

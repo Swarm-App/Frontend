@@ -5,4 +5,5 @@ export const modalStyles = StyleSheet.create({
   modalContent: { width: 300, padding: 20, backgroundColor: 'white', borderRadius: 10 },
   modalTitle: { fontSize: 20, fontWeight: 'bold', marginBottom: 15 },
   input: { height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingHorizontal: 8 },
+  buttonContainer: { flexDirection: 'row', justifyContent: 'space-between' }
 });
