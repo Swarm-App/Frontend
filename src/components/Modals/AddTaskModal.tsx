@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, View, Text, TextInput, Button } from 'react-native';
-import { modalStyles as styles } from './styles/ModalStyles';
+import { modalStyles as styles } from '../styles/ModalStyles';
 
 const AddTaskModal: React.FC<{ visible: boolean; onClose: () => void; onAdd: (title: string, description: string) => void }> = ({ visible, onClose, onAdd }) => {
   const [title, setTitle] = useState('');

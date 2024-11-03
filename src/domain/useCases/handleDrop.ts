@@ -7,29 +7,6 @@ import { TaskRepository } from '../../data/repositories/TaskRepository';
 
 const taskRepository =TaskRepository.getInstance();
 
-// export function handleDrop(
-//   tasks: Tasks,
-//   dropZoneId: string,
-//   taskId: number
-// ): Tasks {
-//   const updatedTasks = {
-//     upcoming: tasks.upcoming.filter((task) => task.id !== taskId),
-//     todo: tasks.todo.filter((task) => task.id !== taskId),
-//     done: tasks.done.filter((task) => task.id !== taskId),
-//   };
-
-//   const movedTask = [...tasks.upcoming, ...tasks.todo, ...tasks.done].find(
-//     (task) => task.id === taskId
-//   );
-
-//   if (movedTask) {
-//     updatedTasks[dropZoneId as keyof Tasks].push(movedTask);
-//   }
-
-//   return updatedTasks;
-// }
-
-
 export function handleDrop(status: TaskStatus,taskId: number)
   {
   const task=taskRepository.getTaskById(taskId);
